@@ -2,6 +2,7 @@
 
 ClickHouse Operator 创建，配置和管理在 Kubernetes上运行的ClickHouse集群。
 
+
 **重要: 如果将Operator从0.6.0或更早版本升级到0.7.0或更高版本，请确保您的ClickHouseInstallation名称短于15个符号。 否则，请勿升级操作员。 如果您有升级问题，请联系support@altinity.com。**
 
 [![issues](https://img.shields.io/github/issues/altinity/clickhouse-operator.svg)](https://github.com/altinity/clickhouse-operator/issues)
@@ -27,7 +28,7 @@ Kubernetes 上的 ClickHouse Operator 目前提供以下内容：
 
 ## Requirements/要求
 
- * Kubernetes 1.12.6+
+ * Kubernetes 1.15.11+
  
 ## Documentation/文献资料
 
