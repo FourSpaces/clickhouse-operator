@@ -1,0 +1,98 @@
+#
+# AWS-specific labels, applicable in 'nodeAffinity' statements
+#
+# beta.kubernetes.io/arch=amd64
+# beta.kubernetes.io/instance-type=t2.medium
+# beta.kubernetes.io/os=linux
+#
+# failure-domain.beta.kubernetes.io/region=us-east-1
+# failure-domain.beta.kubernetes.io/zone=us-east-1a
+#
+# kubernetes.io/hostname=ip-172-20-37-97.ec2.internal
+# kubernetes.io/role=node
+# node-role.kubernetes.io/node=
+#
+# kops.k8s.io/instancegroup=nodes2
+#
+apiVersion: "clickhouse.altinity.com/v1"
+kind: "ClickHouseInstallation"
+metadata:
+  name: "volume-hostpath-test"
+spec:
+  defaults:
+    templates:
+      podTemplate: clickhouse-per-host-on-servers-with
+      hostTemplate: host-template-custom-ports
+  configuration:
+    zookeeper:
+      nodes:
+        - host: hadoop35.bigdata.org
+          port: 2181
+        - host: hadoop36.bigdata.org
+          port: 2181
+        - host: hadoop37.bigdata.org
+          port: 2181
+      session_timeout_ms: 30000
+      operation_timeout_ms: 10000
+    users:
+      user1/networks/ip: "0.0.0.0/0"
+      user1/password: 123456
+      user1/profile: default
+      user2/networks/ip: "0.0.0.0/0"
+      user2/password: 123456
+      user2/profile: default
+    clusters:
+      - name: local_storage
+        layout:
+          shardsCount: 2
+          replicasCount: 2
+
+  templates:
+
+    hostTemplates:
+      - name: host-template-custom-ports
+        spec:
+          tcpPort: 9090
+          httpPort: 8124
+          interserverHTTPPort: 9010
+
+    podTemplates:
+      # Specify Pod Templates with affinity
+
+      - name: clickhouse-per-host-on-servers-with
+        zone:
+          key: "disktype"
+          values:
+            - "hdd"
+        generateName: "{host}"
+        podDistribution:
+          - type: ClickHouseAntiAffinity
+        spec:
+          hostNetwork: true
+          volumes:
+            # Specify volume as path on local filesystem as a directory which will be created, if need be
+            - name: local-path
+              hostPath:
+                path: /data1/clickhouse
+                type: DirectoryOrCreate
+            - name: etc-hosts
+              hostPath:
+                path: /etc/hosts
+                type: FileOrCreate
+          containers:
+            - name: clickhouse-pod
+              image: yandex/clickhouse-server:19.3.7
+              volumeMounts:
+                # Specify reference to volume on local filesystem
+                - name: local-path
+                  mountPath: /var/lib/clickhouse
+                - name: etc-hosts
+                  mountPath: /etc/hosts
+
+              resources:
+                requests:
+                  memory: "2"
+                  cpu: "4g"
+                limits:
+                  memory: "2"
+                  cpu: "4g"

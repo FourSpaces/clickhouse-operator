@@ -1,55 +1,66 @@
-# Quick Start Guides
+# 快速入门指南
 
-# Table of Contents
+# 目录
 * [ClickHouse Operator Installation](#clickhouse-operator-installation)
-* [Building ClickHouse Operator from Sources](#building-clickhouse-operator-from-sources)
-* [Examples](#examples)
-  * [Trivial Example](#trivial-example)
+* [构建 ClickHouse Operator from 源码](#building-clickhouse-operator-from-sources)
+* [Examples/例子](#examples)
+  * [琐碎的 Example](#trivial-example)
   * [Connect to ClickHouse Database](#connect-to-clickhouse-database)
-  * [Simple Persistent Volume Example](#simple-persistent-volume-example)
-  * [Custom Deployment with Pod and VolumeClaim Templates](#custom-deployment-with-pod-and-volumeclaim-templates)
-  * [Custom Deployment with Specific ClickHouse Configuration](#custom-deployment-with-specific-clickhouse-configuration)
+  * [简单的持久卷例子](#simple-persistent-volume-example)
+  * [使用Pod和VolumeClaim模板进行自定义部署](#custom-deployment-with-pod-and-volumeclaim-templates)
+  * [使用特定的ClickHouse配置进行自定义部署](#custom-deployment-with-specific-clickhouse-configuration)
 
-# Prerequisites
+# Prerequisites / 先决条件
 1. Operational Kubernetes instance
-1. Properly configured `kubectl`
+1. 正确配置的`kubectl`
 1. `curl`
 
 # ClickHouse Operator Installation
 
 Apply `clickhouse-operator` installation manifest. The simplest way - directly from `github`.
 
-## **In case you are convenient to install operator into `kube-system` namespace**
+## **如果您方便，请将 operator  安装到`kube-system`命名空间中**
+
 
 just run:
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/Altinity/clickhouse-operator/master/deploy/operator/clickhouse-operator-install.yaml
-``` 
+```
 
-## **In case you'd like to customize installation parameters**,
+## **如果您想自定义安装参数**,
 
 such as namespace where to install operator or operator's image, use the special installer script.
+如果要在其他命名空间安装 operator 或者 operator的镜像，需要使用定制的安装脚本
 ```bash
 curl -s https://raw.githubusercontent.com/Altinity/clickhouse-operator/master/deploy/operator-web-installer/clickhouse-operator-install.sh | OPERATOR_NAMESPACE=test-clickhouse-operator bash
+
+cat 
 ```
+
 Take into account explicitly specified namespace
+考虑明确指定的名称空间
 ```bash
 OPERATOR_NAMESPACE=test-clickhouse-operator
 ```
 This namespace would be created and used to install `clickhouse-operator` into.
 Install script would download some `.yaml` and `.xml` files and install `clickhouse-operator` into specified namespace.
+该名称空间将被创建并用于将clickhouse-operator安装到其中。
+安装脚本会下载一些.yaml和.xml文件，并将clickhouse-operator安装到指定的命名空间中。
 
-If no `OPERATOR_NAMESPACE` specified, as:
+如果未指定“ OPERATOR_NAMESPACE”，则为：
 ```bash
 cd ~
 curl -s https://raw.githubusercontent.com/Altinity/clickhouse-operator/master/deploy/operator-web-installer/clickhouse-operator-install.sh | bash
 ```
 installer will create namespace `clickhouse-operator` and install **clickhouse-operator** into it.
+安装程序将创建命名空间“ clickhouse-operator”，并将** clickhouse-operator **安装到其中。
 
-## **In case you can not run scripts from internet in your protected environment**, 
+## **如果您无法在受保护的环境中从Internet运行脚本**, 
 
 you can download manually [this template file][clickhouse-operator-install-template.yaml]
 and edit it according to your choice. After that apply it with `kubectl`. Or you can use this snippet instead:
+你可以下载 [这个模版][clickhouse-operator-install-template.yaml]并根据您的选择进行编辑。 之后，将其与`kubectl`一起应用。 或者，您可以改用以下代码段：
+
 ```bash
 # Namespace to install operator into
 OPERATOR_NAMESPACE="${OPERATOR_NAMESPACE:-clickhouse-operator}"
@@ -61,7 +72,7 @@ OPERATOR_IMAGE="${OPERATOR_IMAGE:-altinity/clickhouse-operator:latest}"
 # Metrics exporter's docker image
 METRICS_EXPORTER_IMAGE="${METRICS_EXPORTER_IMAGE:-altinity/metrics-exporter:latest}"
 
-# Setup clickhouse-operator into specified namespace
+# 建立 clickhouse-operator into 指定 namespace
 kubectl apply --namespace="${OPERATOR_NAMESPACE}" -f <( \
     curl -s https://raw.githubusercontent.com/Altinity/clickhouse-operator/master/deploy/operator/clickhouse-operator-install-template.yaml | \
         OPERATOR_IMAGE="${OPERATOR_IMAGE}" \
@@ -72,7 +83,7 @@ kubectl apply --namespace="${OPERATOR_NAMESPACE}" -f <( \
 )
 ```
 
-## Operator installation process
+## Operator installation 过程
 ```text
 Setup ClickHouse Operator into test-clickhouse-operator namespace
 namespace/test-clickhouse-operator created
@@ -88,7 +99,7 @@ configmap/etc-clickhouse-operator-usersd-files created
 deployment.apps/clickhouse-operator created
 ```
 
-Check `clickhouse-operator` is running:
+检查 `clickhouse-operator` 是否在运行:
 ```bash
 kubectl get pods -n test-clickhouse-operator
 ```
@@ -97,16 +108,17 @@ NAME                                 READY   STATUS    RESTARTS   AGE
 clickhouse-operator-5ddc6d858f-drppt 1/1     Running   0          1m
 ```
 
-## Building ClickHouse Operator from Sources
+## 从源头构建ClickHouse运营商
 
 Complete instructions on how to build ClickHouse operator from sources as well as how to build a docker image and use it inside `kubernetes` described [here][build_from_sources].
+有关如何从源代码构建ClickHouse运算符以及如何构建docker映像并在[此处] [build_from_sources]中所述的`kubernetes中使用它的完整说明
 
-# Examples
+# 例子
 
-There are several ready-to-use [ClickHouseInstallation examples][chi-examples]. Below are few ones to start with.
+有几个现成的[ClickHouseInstallation示例] [chi-examples]。 以下是一些入门。
 
-## Create Custom Namespace
-It is a good practice to have all components run in dedicated namespaces. Let's run examples in `test` namespace
+## 创建自定义命名空间
+将所有组件都运行在专用名称空间中是一个好习惯。 让我们在“ test”命名空间中运行示例
 ```bash
 kubectl create namespace test
 ```
@@ -114,20 +126,26 @@ kubectl create namespace test
 namespace/test created
 ```
 
-## Trivial example
+## 简单的例子
 
-This is the trivial [1 shard 1 replica][01-simple-layout-01-1shard-1repl.yaml] example.
+这是个简单的 [1 shard 1 replica][01-simple-layout-01-1shard-1repl.yaml] 例子.
 
-**WARNING**: Do not use it for anything other than 'Hello, world!', it does not have persistent storage!
- 
+**WARNING**: 除了“ Hello，world！”以外，请勿将其用于任何其他用途，因为它没有持久性存储！
+
+```
+cd clickhouse-operator-master/docs/chi-examples
+```
+
 ```bash
-kubectl apply -n test-clickhouse-operator -f https://raw.githubusercontent.com/Altinity/clickhouse-operator/master/docs/chi-examples/01-simple-layout-01-1shard-1repl.yaml
+kubectl apply -n test-clickhouse-operator -f https://github.com/Altinity/clickhouse-operator/tree/master/docs/chi-examples/01-simple-layout-01-1shard-1repl.yaml
+
+kubectl apply -n test-clickhouse-operator -f 01-simple-layout-01-1shard-1repl.yaml
 ```
 ```text
 clickhouseinstallation.clickhouse.altinity.com/simple-01 created
 ```
 
-Installation specification is straightforward and defines 1-replica cluster:
+安装规范很简单，定义了一个副本集群：
 ```yaml
 apiVersion: "clickhouse.altinity.com/v1"
 kind: "ClickHouseInstallation"
@@ -135,7 +153,7 @@ metadata:
   name: "simple-01"
 ```
 
-Once cluster is created, there are two checks to be made.
+创建集群后，需要进行两项检查
 
 ```bash
 kubectl get pods -n test-clickhouse-operator
@@ -145,7 +163,7 @@ NAME                    READY   STATUS    RESTARTS   AGE
 chi-b3d29f-a242-0-0-0   1/1     Running   0          10m
 ```
 
-Watch out for 'Running' status. Also check services created by an operator:
+注意“正在运行”状态。 还检查运营商创建的服务：
 
 ```bash
 kubectl get service -n test-clickhouse-operator
@@ -156,13 +174,21 @@ chi-b3d29f-a242-0-0     ClusterIP      None             <none>                  
 clickhouse-example-01   LoadBalancer   100.64.167.170   abc-123.us-east-1.elb.amazonaws.com   8123:30954/TCP,9000:32697/TCP   11m
 ```
 
-ClickHouse is up and running!
+ClickHouse已启动并正在运行！
 
-## Connect to ClickHouse Database
+## Connect to ClickHouse Database 
 
-There are two ways to connect to ClickHouse database
+有两种方法可以连接到ClickHouse数据库
 
-1. In case previous command `kubectl get service -n test` reported **EXTERNAL-IP** (abc-123.us-east-1.elb.amazonaws.com in our case) we can directly access ClickHouse with:
+```
+[root@logt222 ~]# kubectl get service -n test-clickhouse-operator
+NAME                          TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                         AGE
+chi-simple-01-cluster-0-0     ClusterIP      None            <none>        8123/TCP,9000/TCP,9009/TCP      13h
+clickhouse-operator-metrics   ClusterIP      10.43.125.221   <none>        8888/TCP                        17h
+clickhouse-simple-01          LoadBalancer   10.43.20.142    <pending>     8123:32339/TCP,9000:30207/TCP   13h
+```
+
+1. 如果先前的命令“ kubectl get service -n test”报告为** EXTERNAL-IP **（在我们的案例中为abc-123.us-east-1.elb.amazonaws.com），我们可以使用以下命令直接访问ClickHouse：
 ```bash
 clickhouse-client -h abc-123.us-east-1.elb.amazonaws.com
 ```
@@ -170,10 +196,12 @@ clickhouse-client -h abc-123.us-east-1.elb.amazonaws.com
 ClickHouse client version 18.14.12.
 Connecting to abc-123.us-east-1.elb.amazonaws.com:9000.
 Connected to ClickHouse server version 19.4.3 revision 54416.
-``` 
-1. In case there is not **EXTERNAL-IP** available, we can access ClickHouse from inside Kubernetes cluster
+```
+2. 如果没有** EXTERNAL-IP **，我们可以从Kubernetes集群内部访问ClickHouse
 ```bash
 kubectl -n test-clickhouse-operator exec -it chi-b3d29f-a242-0-0-0 -- clickhouse-client
+
+kubectl -n test-clickhouse-operator exec -it chi-simple-01-cluster-0-0-0 -- clickhouse-client
 ```
 ```text
 ClickHouse client version 19.4.3.11.
@@ -181,10 +209,11 @@ Connecting to localhost:9000 as user default.
 Connected to ClickHouse server version 19.4.3 revision 54416.
 ```
 
-## Simple Persistent Volume Example
+## 简单的持久卷例子
 
-In case of having Dynamic Volume Provisioning available - ex.: running on AWS - we are able to use PersistentVolumeClaims
-Manifest is [available in examples][03-persistent-volume-01-default-volume.yaml]
+如果有可用的动态卷配置-ex.: 
+在AWS上运行-我们能够使用PersistentVolumeClaims
+清单是 [available in examples][03-persistent-volume-01-default-volume.yaml]
 
 ```yaml
 apiVersion: "clickhouse.altinity.com/v1"
@@ -220,12 +249,22 @@ spec:
               storage: 123Mi
 ```
 
-## Custom Deployment with Pod and VolumeClaim Templates
 
-Let's install more complex example with:
-1. Deployment specified
+
+```
+kubectl apply -n test-clickhouse-operator -f 03-persistent-volume-02-pod-template.yaml
+```
+
+
+
+
+
+## 使用Pod和VolumeClaim模板进行自定义部署
+
+让我们安装更复杂的示例:
+1. 指定的部署
 1. Pod template
-1. VolumeClaim template
+1. VolumeClaim template（卷目录模版）
 
 Manifest is [available in examples][03-persistent-volume-02-pod-template.yaml]
 
@@ -239,6 +278,7 @@ spec:
     clusters:
       - name: "deployment-pv"
         # Templates are specified for this cluster explicitly
+        # 为此群集显式指定模板
         templates:
           podTemplate: pod-template-with-volumes
         layout:
@@ -282,9 +322,9 @@ spec:
               storage: 2Gi
 ```
 
-## Custom Deployment with Specific ClickHouse Configuration
+## 使用特定的ClickHouse配置进行自定义部署
 
-You can tell operator to configure your ClickHouse, as shown in the example below ([link to the manifest][05-settings-01-overview.yaml]):
+您可以告诉 operator 配置ClickHouse，如下例所示 ([link to the manifest][05-settings-01-overview.yaml]):
 
 ```yaml
 apiVersion: "clickhouse.altinity.com/v1"

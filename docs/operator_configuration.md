@@ -1,24 +1,27 @@
 # `clickhouse-operator` configuration
 
-## Introduction
+## 介绍
 
-`clickhouse-operator` can be configured in a variety of ways. Configuration consists of the following main parts:
-1. Operator settings -- operator settings control behaviour of operator itself.
-1. ClickHouse common configuration files - ready-to-use XML files with sections of ClickHouse configuration **as-is**.
-Common configuration typically contains general ClickHouse configuration sections, such as network listen endpoints, logger options, etc. Those are exposed via config maps.
-1. ClickHouse user configuration files - ready-to-use XML files with sections of ClickHouse configuration **as-is**
-User configuration typically contains ClickHouse configuration sections with user accounts specifications. Those are exposed via config maps as well.
-1. `ClickHouseOperatorConfiguration` resource.
-1. `ClickHouseInstallationTemplate`s. Operator provides functionality to specify parts of `ClickHouseInstallation` manifest as a set of templates, which would be used in all `ClickHouseInstallation`s.   
+`clickhouse-operator` 可以通过多种方式进行配置。配置包括以下主要部分:
 
-## Operator settings
+1. 操作员设置——操作员设置控制操作员本身的行为。
+1. ClickHouse通用配置文件-即用的XML文件，带有ClickHouse配置**原样**的部分。
+常见配置通常包含一般的ClickHouse配置部分，如网络侦听端点、日志程序选项等。这些都是通过配置映射公开的。
+1. ClickHouse用户配置文件-随时可以使用的XML文件，带有ClickHouse配置的部分
+用户配置通常包含带有用户帐户规范的ClickHouse配置部分。这些也通过配置映射公开。
+1. “ClickHouseOperatorConfiguration”资源。
+1. ClickHouseInstallationTemplate的。操作符提供了将' ClickHouseInstallation '清单的部分指定为一组模板的功能，这将在所有' ClickHouseInstallation '中使用。
 
-Operator settings are initialized in-order from 3 sources:
+## Operator 设置
+
+Operator 设置初始化顺序从3个来源:
 * `/etc/clickhouse-operator/config.yaml`
 * etc-clickhouse-operator-files configmap (also a part of default [clickhouse-operator-install.yaml][clickhouse-operator-install.yaml]
 * `ClickHouseOperatorConfiguration` resource. See [example][70-chop-config.yaml] for details.
 
 Next sources merges with the previous one. Changes to `etc-clickhouse-operator-files` are not monitored, but picked up if operator is restarted. Changes to `ClickHouseOperatorConfiguration` are monitored by an operator and applied immediately.
+
+下一个源与前一个源合并。对etc-clickhouse- operatoror文件的更改不会被监视，但如果操作员重新启动就会被拾取。对ClickHouseOperatorConfiguration的更改由操作员监控并立即应用。
 
 `config.yaml` has following settings:
 
@@ -119,22 +122,29 @@ chPort: 8123
 
 Operator deploys ClickHouse clusters with different defaults, that can be configured in a flexible way. 
 
-### Default ClickHouse configuration files
+Operator使用不同的缺省值部署ClickHouse集群，可以以灵活的方式进行配置
+
+### 默认的ClickHouse配置文件
 
 Default ClickHouse configuration files can be found in the following config maps, that are mounted to corresponding configuration folders of ClickHouse pods:
+
+默认的ClickHouse配置文件可以在下面的配置映射中找到，它们被挂载到ClickHouse pods相应的配置文件夹中:
+
 * etc-clickhouse-operator-confd-files
 * etc-clickhouse-operator-configd-files
 * etc-clickhouse-operator-usersd-files
 
-Config maps are initialized in default [clickhouse-operator-install.yaml][clickhouse-operator-install.yaml].
+默认情况下初始化配置映射 [clickhouse-operator-install.yaml][clickhouse-operator-install.yaml].
 
 ### Defaults for ClickHouseInstallation
 
-Defaults for ClickHouseInstallation can be provided by `ClickHouseInstallationTemplate` it a variety of ways:
+默认的ClickHouseInstallationTemplate可以提供它的多种方式:
 * etc-clickhouse-operator-templatesd-files configmap
 * `ClickHouseInstallationTemplate` resources.
 
 `ClickHouseInstallationTemplate` has the same structure as `ClickHouseInstallation`, but all parts and fields are optional. Templates are included into an installation with 'useTemplates' syntax. For example, one can define a template for ClickHouse pod:
+
+ClickHouseInstallationTemplate与ClickHouseInstallation具有相同的结构，但是所有的部件和字段都是可选的。模板包含在带有“useTemplates”语法的安装中。例如，可以为ClickHouse pod定义一个模板
 
 ```apiVersion: "clickhouse.altinity.com/v1"
 kind: "ClickHouseInstallationTemplate"
@@ -153,6 +163,9 @@ spec:
 ```
 
 Template needs to be deployed to some namespace, and later on used in the installation:
+
+模板需要部署到某个名称空间，稍后在安装中使用:
+
 ```
 apiVersion: "clickhouse.altinity.com/v1"
 kind: "ClickHouseInstallation"

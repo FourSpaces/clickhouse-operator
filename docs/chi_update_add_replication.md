@@ -3,9 +3,15 @@
 ## Prerequisites
   1. Assume we have `clickhouse-operator` already installed and running
   1. Assume we have `Zookeeper` already installed and running
-  
+
+1、假设已经安装并运行了clickhouse-operator
+
+2、假设我们已经安装并运行了Zookeeper
+
 ## Install ClickHouseInstallation example
 We are going to install everything into `dev` namespace. `clickhouse-operator` is already installed into `dev` namespace
+
+我们将把一切都安装到dev名称空间中。clickhouse操作符已经安装到dev名称空间中
 
 Check pre-initial position.
 ```bash
@@ -23,21 +29,42 @@ NAME                                            DESIRED   CURRENT   READY   AGE
 replicaset.apps/clickhouse-operator-5cbc47484   1         1         1       17s
 ```
 Now let's install ClickHouse from provided examples. 
+
+现在让我们从提供的示例安装ClickHouse。
+
 There are two **rolling update** examples presented:
+
+这里提供了两个滚动更新示例:
+
 1. Simple stateless cluster: [initial position][stateless_initial_position] and [update][stateless_updated_position]
 1. Stateful cluster with Persistent Volumes: [initial position][stateful_initial_position] and [update][stateful_updated_position] 
 
-## Simple Rolling Update Example
+
+
+1、简单无状态集群:初始定位和更新
+
+2、具有持久卷的有状态集群:初始位置和更新
+
+## Simple Rolling Update Example/简单的滚动更新示例
 
 Let's go with simple stateless cluster. Manifest file with [initial position][stateless_initial_position]:
+
+让我们使用简单的无状态集群。初始位置清单文件:
+
 ```bash
 kubectl -n dev apply -f 07-rolling-update-stateless-01-initial-position.yaml
 ```
 Check initial position. We should have cluster up and running:
+
+检查初始位置。我们应该建立并运行集群:
+
 ```bash
 kubectl -n dev get all,configmap
 ```
 ClickHouse is installed, up and running, all 4 expected pods are running
+
+ClickHouse已经安装、启动并运行，所有4个预期的pods都在运行
+
 ```text
 NAME                                      READY   STATUS    RESTARTS   AGE
 pod/chi-d02eaa-347e-0-0-0                 1/1     Running   0          19s
@@ -64,11 +91,20 @@ configmap/chi-d02eaa-deploy-confd-347e-2-0   1      19s
 configmap/chi-d02eaa-deploy-confd-347e-3-0   1      19s
 ```
 Let's explore one Pod in order to check available ClickHouse config files.
+
+让我们研究一个Pod，以检查可用的ClickHouse配置文件。
+
 Navigate directly inside the Pod:
+
+直接在Pod内部导航:
+
 ```bash
 kubectl -n dev exec -it chi-d02eaa-347e-0-0-0 -- bash
 ```
 And take a look on ClickHouse config files available
+
+看看可用的ClickHouse配置文件
+
 ```text
 root@chi-d02eaa-347e-0-0-0:/etc/clickhouse-server# ls /etc/clickhouse-server/conf.d/
 macros.xml

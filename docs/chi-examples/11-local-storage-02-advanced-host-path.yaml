@@ -18,6 +18,8 @@ apiVersion: "clickhouse.altinity.com/v1"
 kind: "ClickHouseInstallation"
 metadata:
   name: "volume-hostpath"
+  labels:
+    app: chop
 spec:
   defaults:
     templates:

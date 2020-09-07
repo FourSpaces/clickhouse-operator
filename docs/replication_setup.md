@@ -1,15 +1,17 @@
 
 # Setup ClickHouse cluster with data replication
 
-## Prerequisites
+## 先决条件
 
 1. ClickHouse operator [installed][operator_installation_details.md]
 1. Zookeeper [installed][zookeeper_setup.md]
 
 
-## Manifest
+## 清单
 
 Let's take a look on [example][chi-examples/04-replication-zookeeper-05-simple-PV.yaml], which creates a cluster with 2 shards and 2 replicas and persistent storage.
+
+让我们看一下示例，它创建了一个具有2个碎片、2个副本和持久存储的集群。
 
 ```yaml
 apiVersion: "clickhouse.altinity.com/v1"
@@ -52,20 +54,29 @@ spec:
 ```
 
 
-## Replicated table setup
+## 复制表设置
 
 ### Macros
 Operator provides set of [macros][macros], which are:
+
+操作符提供一组宏，它们是:
+
  1. `{installation}` -- ClickHouse Installation name
- 1. `{cluster}` -- primary cluster name
- 1. `{replica}` -- replica name in the cluster, maps to pod service name
+ 1. `{cluster}` -- 主集群名称
+ 1. `{replica}` -- 集群中的副本名称映射到pod服务名称
  1. `{shard}` -- shard id
 
 ClickHouse also supports internal macros `{database}` and `{table}` that maps to current **database** and **table** respectively.
 
+ClickHouse还支持分别映射到当前数据库和表的内部宏{database}和{table}。
+
+
+
 ### Create replicated table
 
 Now we can create [replicated table][replication], using specified macros
+
+现在我们可以使用指定的宏创建复制表
 
 ```sql
 CREATE TABLE events_local on cluster '{cluster}' (
@@ -73,7 +84,7 @@ CREATE TABLE events_local on cluster '{cluster}' (
     event_type  Int32,
     article_id  Int32,
     title       String
-) engine=ReplicatedMergeTree('/clickhouse/{installation}/{cluster}/tables/{shard}/{database}/{table}', '{replica}', event_date, (event_type, article_id), 8192);
+  ) engine=ReplicatedMergeTree('/clickhouse/{installation}/{cluster}/tables/{shard}/{database}/{table}', '{replica}', event_date, (event_type, article_id), 8192);
 ```
 
 ```sql
@@ -81,12 +92,12 @@ CREATE TABLE events on cluster '{cluster}' AS events_local
 ENGINE = Distributed('{cluster}', default, events_local, rand());
 ```
 
-We can generate some data:
+我们可以生成一些数据:
 ```sql
 INSERT INTO events SELECT today(), rand()%3, number, 'my title' FROM numbers(100);
 ```
 
-And check how these data are distributed over the cluster
+并检查这些数据如何在集群中分布
 ```sql
 SELECT count() FROM events;
 SELECT count() FROM events_local;

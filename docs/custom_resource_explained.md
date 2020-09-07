@@ -5,6 +5,10 @@ Full example is available in [99-clickhouseinstallation-max.yaml][99-clickhousei
 The best way to work with this doc is to open [99-clickhouseinstallation-max.yaml][99-clickhouseinstallation-max.yaml] in separate tab
 and look into it along with reading this explanation.  
 
+让我们详细描述一下ClickHouse自定义资源。yaml文件。
+
+使用这个文档的最佳方法是打开99-clickhouseinstallation-max。在单独的选项卡中查看yaml，并阅读本解释。
+
 ```yaml
 apiVersion: "clickhouse.altinity.com/v1"
 kind: "ClickHouseInstallation"
@@ -13,13 +17,17 @@ metadata:
 ```
 Create resource of `kind: "ClickHouseInstallation"` named as `"clickhouse-installation-max"`.
 Accessible with `kubectl` as:
+
+创建类资源:“ClickHouseInstallation”命名为“clickhouse install -max”。
+可与kubectl联系如下:
+
 ```bash
 kubectl get clickhouseinstallations.clickhouse.altinity.com 
 ```
 ```text
 NAME                           AGE
 clickhouse-installation-max   23h
-``` 
+```
 
 ## .spec.defaults
 ```yaml
@@ -33,16 +41,27 @@ clickhouse-installation-max   23h
       logVolumeClaimTemplate: default-volume-claim
       serviceTemplate: chi-service-template
 ```
-`.spec.defaults` section represents default values for sections below.
+`.spec.defaults` 表示下面各节的默认值。
+
   - `.spec.defaults.replicasUseFQDN` - should replicas be specified by FQDN in `<host></host>`
+
+    副本是否应该由FQDN在
+
   - `.spec.defaults.distributedDDL` - reference to `<yandex><distributed_ddl></distributed_ddl></yandex>`
+
   - `.spec.defaults.templates` would be used everywhere where `templates` is needed.  
+
+    将在任何需要模板的地方使用。
 
 ## .spec.configuration
 ```yaml
   configuration:
 ```
 `.spec.configuration` section represents sources for ClickHouse configuration files. Be it users, remote servers and etc configuration files. 
+
+.spec。配置部分表示ClickHouse配置文件的源代码。可能是用户，远程服务器等配置文件。
+
+
 
 ## .spec.configuration.zookeeper
 ```yaml
@@ -61,7 +80,10 @@ clickhouse-installation-max   23h
 ```
 `.spec.configuration.zookeeper` refers to [&lt;yandex&gt;&lt;zookeeper&gt;&lt;/zookeeper&gt;&lt;/yandex&gt;][server-settings_zookeeper] config section
 
+
+
 ## .spec.configuration.profiles
+
 `.spec.configuration.profiles` refers to [&lt;yandex&gt;&lt;profiles&gt;&lt;/profiles&gt;&lt;/yandex&gt;][settings] settings sections.
 ```yaml
     profiles:
@@ -106,7 +128,7 @@ expands into
 #         <method>zstd</method>
 #      </case>
 #      </compression>
-``` 
+```
 `.spec.configuration.settings` refers to [&lt;yandex&gt;&lt;profiles&gt;&lt;/profiles&gt;&lt;users&gt;&lt;/users&gt;&lt;/yandex&gt;][settings] settings sections.
 
 ## .spec.configuration.files
@@ -292,7 +314,7 @@ In ClickHouse config file this would be represented as:
         </all-counts>
     </remote_servers>
 </yandex>
-``` 
+```
 with full IP and DNS management provided by k8s and operator.
 
 ### Layout with shards count specified
@@ -334,7 +356,7 @@ In ClickHouse config file this would be represented as:
         </shards-only>
     </remote_servers>
 </yandex>
-``` 
+```
 
 ### Layout with replicas count specified
 
@@ -370,7 +392,7 @@ In ClickHouse config file this would be represented as:
         </replicas-only>
     </remote_servers>
 </yandex>
-``` 
+```
 
 ### Advanced layout techniques
 `layout` provides possibility to explicitly define each shard and replica with
@@ -582,4 +604,4 @@ Example - how to place ClickHouse instances on nodes labeled as `clickhouse=allo
 [external_dicts_dict]: https://clickhouse.yandex/docs/en/query_language/dicts/external_dicts_dict/
 [service]: https://kubernetes.io/docs/concepts/services-networking/service/
 [persistentvolumeclaims]: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims
-[pod-templates]: https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/#pod-templates 
+[pod-templates]: https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/#pod-templates

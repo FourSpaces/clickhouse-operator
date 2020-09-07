@@ -1,8 +1,8 @@
 # ClickHouse Operator
 
-ClickHouse Operator creates, configures and manages ClickHouse clusters running on Kubernetes.
+ClickHouse Operator 创建，配置和管理在 Kubernetes上运行的ClickHouse集群。
 
-**IMPORTANT: If you upgrade operator from 0.6.0 or earlier to 0.7.0 or later releases please make sure your ClickHouseInstallation name is shorter than 15 symbols. Otherwise DO NOT UPGRADE an operator. Please contact support@altinity.com if you have upgrade issues**
+**重要: 如果将Operator从0.6.0或更早版本升级到0.7.0或更高版本，请确保您的ClickHouseInstallation名称短于15个符号。 否则，请勿升级操作员。 如果您有升级问题，请联系support@altinity.com。**
 
 [![issues](https://img.shields.io/github/issues/altinity/clickhouse-operator.svg)](https://github.com/altinity/clickhouse-operator/issues)
 [![tags](https://img.shields.io/github/tag/altinity/clickhouse-operator.svg)](https://github.com/altinity/clickhouse-operator/tags)
@@ -11,53 +11,53 @@ ClickHouse Operator creates, configures and manages ClickHouse clusters running 
 [![CircleCI](https://circleci.com/gh/Altinity/clickhouse-operator.svg?style=svg)](https://circleci.com/gh/Altinity/clickhouse-operator)
 
 
-## Features
+## Features 特征
 
-The ClickHouse Operator for Kubernetes currently provides the following:
+Kubernetes 上的 ClickHouse Operator 目前提供以下内容：
 
-- Creates ClickHouse clusters based on Custom Resource [specification][chi_max_yaml] provided
-- Customized storage provisioning (VolumeClaim templates)
-- Customized pod templates
-- Customized service templates for endpoints
-- ClickHouse configuration and settings (including Zookeeper integration)
-- Flexible templating
-- ClickHouse cluster scaling including automatic schema propagation
-- ClickHouse version upgrades
-- Exporting ClickHouse metrics to Prometheus
+- 创建Clickhouse 集群 根据自定义资源 [specification/规范][chi_max_yaml]
+- 定制的存储配置（VolumeClaim模板）
+- 定制 pod 模板
+- 定制 server 模板 从 endpoints
+- ClickHouse配置和设置（包括Zookeeper集成）
+- 灵活的模板
+- ClickHouse群集扩展 包括schema自动传播
+- ClickHouse版本升级
+- 将 ClickHouse 指标导出到 Prometheuss
 
-## Requirements
+## Requirements/要求
 
  * Kubernetes 1.12.6+
  
-## Documentation
+## Documentation/文献资料
 
-[Quick Start Guide][quick_start_guide]
+[快速入门指南][quick_start_guide]
 
 **Advanced setups**
- * [Detailed Operator Installation Instructions][detailed_installation_instructions]
-   * [Operator Configuration][operator_configuration]
- * [Setup ClickHouse cluster with replication][replication_setup]
-   * [Setting up Zookeeper][zookeeper_setup]
- * [Persistent Storage Configuration][storage_configuration]
- * [ClickHouse Installation Custom Resource specification][crd_explained]
+ * [详细的 Operator 安装说明][detailed_installation_instructions]
+   * [Operator 配置][operator_configuration]
+ * [设置 ClickHouse 集群 用于复制][replication_setup]
+   * [配置 Zookeeper][zookeeper_setup]
+ * [配置永久存储][storage_configuration]
+ * [ClickHouse安装自定义资源规范][crd_explained]
  
-**Maintenance tasks**
- * [Add replication to an existing ClickHouse cluster][update_cluster_add_replication]
- * [Schema maintenance][schema_migration]
- * [Update ClickHouse version][update_clickhouse_version]
- * [Update Operator version][update_operator]
+**维护任务**
+ * [基于 ClickHouse 集群添加 replication 功能][update_cluster_add_replication]
+ * [Schema 维护][schema_migration]
+ * [更新ClickHouse版本][update_clickhouse_version]
+ * [更新 Operator 版本][update_operator]
 
-**Monitoring**
- * [Setup Monitoring][monitoring_setup]
- * [Prometheus & clickhouse-operator integration][prometheus_setup]
- * [Grafana & Prometheus integration][grafana_setup]
+**Monitoring/监控方式**
+ * [设置监控][monitoring_setup]
+ * [Prometheus和Clickhouse-operator集成][prometheus_setup]
+ * [Grafana和Prometheus整合][grafana_setup]
 
 **How to contribute**
  * [How to contribute/submit a patch][contributing_manual]
  
 ---
 **All docs**
- * [All available docs list][all_docs_list]
+ * [所有可用的文档列表][all_docs_list]
 ---
  
 ## License
